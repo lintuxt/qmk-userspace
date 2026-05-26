@@ -1,44 +1,50 @@
-# qmk_userspace
+*Custom QMK firmware for my hand-built Corne (crkbd rev1). Bespoke OLED font, an American flag RGB Matrix effect, and a hardware-bypass workaround for three dead LEDs. Builds against unmodified upstream QMK — no fork to maintain.*
 
-External QMK userspace for @lintuxt's Corne (crkbd rev1) keymap.
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://github.com/lintuxt/qmk-userspace/blob/trunk/keyboards/crkbd/keymaps/lintuxt/keymap.c)
+[![QMK 0.32.14](https://img.shields.io/badge/QMK-0.32.14-2ea44f)](https://github.com/qmk/qmk_firmware/releases/tag/0.32.14)
 
-Builds against an unmodified upstream QMK — no fork to maintain.
-Currently targets QMK **0.32.14**.
+## Install
 
-## Layout
+Requires the `qmk` CLI and an upstream QMK checkout (kept at `../qmk`, pinned to QMK 0.32.14).
 
-- `keyboards/crkbd/keymaps/lintuxt/` — the keymap (`keymap.c`, `config.h`, `rules.mk`)
-- `qmk.json` — build-target manifest
-- `crkbd_rev1_lintuxt.hex` — latest built firmware
-
-## Building
-
-Requires the `qmk` CLI and an upstream QMK checkout (kept at `../qmk`).
-
-One-time setup:
-
-```bash
+```sh
 qmk config user.qmk_home="$(cd ../qmk && pwd)"
 qmk config user.overlay_dir="$(pwd)"
-```
-
-Build:
-
-```bash
 qmk userspace-compile
 ```
 
-## Upgrading QMK
+The build emits `crkbd_rev1_lintuxt.hex` at the repo root.
 
-Bump the upstream checkout — no fork to merge:
+## Quickstart
 
-```bash
-cd ../qmk && git fetch --tags && git checkout <newer-tag> && qmk git-submodule
+Put the Corne into the caterina bootloader (reset button on the half you're flashing) and run:
+
+```sh
+qmk flash crkbd_rev1_lintuxt.hex
 ```
 
-Then rebuild and fix any newly surfaced breaking changes in the keymap.
+Or drop the hex into [QMK Toolbox](https://github.com/qmk/qmk_toolbox). Flash both halves — they share the same firmware image.
 
-## Flashing
+## Why it exists
 
-Manual step: put the Corne into the caterina bootloader (reset button) and flash
-`crkbd_rev1_lintuxt.hex` with `qmk flash` or QMK Toolbox.
+I built my Corne in 2020. For six years I ran essentially stock firmware on it — the default QMK splash on the OLEDs, a generic rainbow on the underglow, and three dead LEDs on the right half that I'd hardware-bypassed with a jumper but never worked around in firmware.
+
+Every customization I wanted was its own multi-day project. I had a list. I never shipped it.
+
+The whole list closed in one afternoon with Claude Code: a bespoke OLED font drawn pixel-by-pixel, a custom RGB Matrix effect (`LINTUXT_AMERICAN` — mirrored American flag with a wind-ripple wave, per half), and a chain-shift workaround for the dead RHS LEDs. The full story: [Six years of "someday", shipped in an afternoon](https://lintuxt.ai/blog/six-years-of-someday-shipped-in-an-afternoon/).
+
+This repo is the firmware that came out of that afternoon.
+
+## Documentation
+
+The keymap, font, and RGB effect live under [`keyboards/crkbd/keymaps/lintuxt/`](https://github.com/lintuxt/qmk-userspace/tree/trunk/keyboards/crkbd/keymaps/lintuxt):
+
+- [`keymap.c`](https://github.com/lintuxt/qmk-userspace/blob/trunk/keyboards/crkbd/keymaps/lintuxt/keymap.c) — layers, custom font, OLED rendering
+- [`rgb_matrix_user.inc`](https://github.com/lintuxt/qmk-userspace/blob/trunk/keyboards/crkbd/keymaps/lintuxt/rgb_matrix_user.inc) — `LINTUXT_AMERICAN` effect
+- [`config.h`](https://github.com/lintuxt/qmk-userspace/blob/trunk/keyboards/crkbd/keymaps/lintuxt/config.h), [`rules.mk`](https://github.com/lintuxt/qmk-userspace/blob/trunk/keyboards/crkbd/keymaps/lintuxt/rules.mk) — build config
+
+To bump QMK: `cd ../qmk && git fetch --tags && git checkout <newer-tag> && qmk git-submodule`, then rebuild and resolve any keymap drift.
+
+## License
+
+ISC — see the header on [`keymap.c`](https://github.com/lintuxt/qmk-userspace/blob/trunk/keyboards/crkbd/keymaps/lintuxt/keymap.c).
